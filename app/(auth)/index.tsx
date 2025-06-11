@@ -1,31 +1,32 @@
 import { View, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { useColorScheme } from 'nativewind';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  // const { login } = useAuth();
+  const { login } = useAuth();
   const { colorScheme } = useColorScheme();
 
   const handleLogin = async () => {
-    // if (!email || !password) {
-    //   Alert.alert('Erro', 'Por favor, preencha todos os campos');
-    //   return;
-    // }
+    if (!email || !password) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      return;
+    }
 
-    // setLoading(true);
-    // try {
-    //   await login({ email, password });
-    // } catch (error) {
-    //   Alert.alert(
-    //     'Falha no Login',
-    //     error.message || 'Credenciais inválidas. Por favor, tente novamente.'
-    //   );
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    try {
+      await login({ email, password });
+    } catch (error) {
+      Alert.alert(
+        'Falha no Login',
+        error.message || 'Credenciais inválidas. Por favor, tente novamente.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

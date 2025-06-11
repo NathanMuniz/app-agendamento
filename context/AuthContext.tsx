@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 
 interface User {
   id: string;
@@ -25,16 +26,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // const token = await AsyncStorage.getItem('authToken');
-        // if (token) {
-        //   const userData = await AsyncStorage.getItem('userData');
-        //   if (userData) {
-        //     setUser(JSON.parse(userData));
-        //     setIsAuthenticated(true);
-        //   }
-        // }
-          setIsAuthenticated(false);
-
+        const token = await AsyncStorage.getItem('authToken');
+        if (token) {
+          const userData = await AsyncStorage.getItem('userData');
+          if (userData) {
+            setUser(JSON.parse(userData));
+            setIsAuthenticated(true);
+          }
+        }
+        setIsAuthenticated(true);
 
       } catch (error) {
 
@@ -50,21 +50,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async ({ email, password }: { email: string; password: string }) => {
     try {
       // Simulação de API (substitua pela sua implementação real)
-      const response = await fetch('https://sua-api.com/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // const response = await fetch('https://sua-api.com/login', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ email, password }),
+      // });
 
-      const { token, user: userData } = await response.json();
+      // const { token } = await response.json();
+
+      const token = 'test'
+
+      const userData: User = {
+          'id': '1',
+          'name': 'nathan',
+          'email': 'test@gmailcom'
+        }
+      
 
       await AsyncStorage.setItem('authToken', token);
       await AsyncStorage.setItem('userData', JSON.stringify(userData));
-      
+      console.log(userData)
+
       setUser(userData);
       setIsAuthenticated(true);
+      
+      router.replace('/(app)/(tabs)');
       
     } catch (error) {
       console.error('Login error:', error);
@@ -80,12 +92,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      isAuthenticated, 
-      user, 
+    <AuthContext.Provider value={{
+      isAuthenticated,
+      user,
       isLoading,
-      login, 
-      logout 
+      login,
+      logout
     }}>
       {children}
     </AuthContext.Provider>
